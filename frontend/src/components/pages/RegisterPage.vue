@@ -5,7 +5,14 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title mb-4">Register</h5>
+
+            <div v-if="successMessage" class="alert alert-success">
+            {{ successMessage }}
+            </div> 
+
             <form @submit.prevent="registerAction">
+
+
               <!-- Name Input -->
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
@@ -72,6 +79,7 @@ export default {
       confirmPassword: '',
       validationErrors: {},
       isSubmitting: false,
+      successMessage: '',
       namePattern: /^[a-zA-Z\s]+$/, // Only allows letters and spaces
       emailPattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, // Standard email validation
       passwordPattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, // Password must contain upper, lower, and number
@@ -79,15 +87,15 @@ export default {
   },
   created() {
     if (localStorage.getItem('token')) {
-      this.$router.push('/dashboard'); // Redirect if already logged in
+      this.$router.push('/'); 
     }
   },
   methods: {
     async registerAction() {
-      this.validationErrors = {}; // Clear validation errors before submitting
+      this.validationErrors = {}; 
       if (!this.validateInputs()) {
         this.isSubmitting = false;
-        return; // Stop the submission if validation fails
+        return; 
       }
 
       this.isSubmitting = true;
@@ -96,17 +104,23 @@ export default {
         const response = await userService.register(this.name, this.email, this.password);
         console.log('Success response:', response); // Log the successful response
         localStorage.setItem('token', response.token);
-        this.$router.push('/dashboard');
+         
+         this.successMessage = response.message;
+
+         setTimeout(() => {
+        this.$router.push('/'); // Redirect to login page after showing the message
+        }, 2000);
+       
       } catch (error) {
         this.isSubmitting = false;
         if (error.errors) {
           this.validationErrors = error.errors; // Capture validation errors from backend
         }
-        console.log('Error response:', error); // Log the error response
+        console.log('Error response:', error); 
       }
     },
     validateInputs() {
-      this.validationErrors = {}; // Clear previous errors
+      this.validationErrors = {}; 
       let isValid = true;
 
       if (!this.namePattern.test(this.name)) {
