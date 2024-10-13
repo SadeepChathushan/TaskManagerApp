@@ -13,11 +13,18 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        return User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password'))
-        ]);
+         // Create the user
+    $user = User::create([
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'password' => Hash::make($request->input('password'))
+    ]);
+
+    // Return the success response with a message
+    return response()->json([
+        'message' => 'Registration successful!',
+        'user' => $user
+    ], Response::HTTP_CREATED);
     }
 
     public function login(Request $request)
@@ -37,12 +44,13 @@ class AuthController extends Controller
     // Generate the API token
     $token = $user->createToken('api-token')->plainTextToken;
 
-    $cookie = cookie('jwt',$token,60*24);
+   //$cookie = cookie('jwt',$token,60*24);
     return response([
         'message' => 'Success',
         "JWt"=>$token
       
-    ])->withCookie($cookie);
+    ]);
+    //->withCookie($cookie)
     }
 
     public function user()
