@@ -1,8 +1,8 @@
-Task Manager System
+<h1><b>Task Manager System</b></h1>
 
 A simple Task Manager application using Laravel for the backend and Vue.js for the frontend.
 
-Features
+<h2>Features</h2>
 
 User Authentication: Register and login.
 
